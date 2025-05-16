@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>News Slideshow</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1 class="title"> News about {{ query }}</h1>
+
+  <!-- ✅ Search Form -->
+  <form method="get" action="/recommend-news-page" class="search-form">
+    <input type="text" name="category" placeholder="Search news..." value="{{ query }}" required>
+    <button type="submit"> Search</button>
+  </form>
+
+  <!-- ✅ News Slideshow Carousel -->
+  <div class="carousel-container">
+    {% if articles %}
+      {% for article in articles %}
+      <div class="carousel-slide {% if loop.index0 == 0 %}active{% endif %}">
+        {% if article.image %}
+          <img src="{{ article.image }}" alt="Article Image">
+        {% endif %}
+        <h2 class="headline">{{ article.title }}</h2>
+        {% if article.summary %}
+          <p class="summary">{{ article.summary }}</p>
+        {% endif %}
+        <a href="{{ article.url }}" target="_blank" class="read-link">Click here to read more </a>
+        <div class="meta">
+          {% if article.author %}<p> Written by : <span>{{ article.author }}</span></p>{% endif %}
+          {% if article.source %}<p> publisher: <span>{{ article.source }}</span></p>{% endif %}
+          {% if article.published %}<p>published at : <span>{{ article.published[:10] }}</span></p>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No articles found. Try a different search term.</p>
+    {% endif %}
+
+    <button class="nav prev" onclick="prevSlide()">❮</button>
+    <button class="nav next" onclick="nextSlide()">❯</button>
+  </div>
+
+  <!-- ✅ Carousel Script -->
+  <script>
+    const slides = document.querySelectorAll('.carousel-slide');
+    let currentIndex = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
+    }
+
+    showSlide(currentIndex);
+  </script>
+</body>
+</html>
