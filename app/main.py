@@ -30,9 +30,17 @@ def root():
 # ✅ HTML news page with full article info
 @app.get("/recommend-news-page")
 async def pretty_news_page(request: Request, category: str = "technology"):
+    # 🔒 Optional: validate known categories
+    VALID_CATEGORIES = ["technology", "world", "business", "ai", "sports", "health", "entertainment", "science"]
+
+    # If user enters "home" or an unknown term, default to "technology"
+    if category.lower() not in VALID_CATEGORIES:
+        category = "technology"
+
+    # Fetch articles
     articles = await get_news_articles(category)
 
-    # Handle error (like API key missing or API failure)
+    # Handle error from fetch
     if isinstance(articles, dict) and "error" in articles:
         return templates.TemplateResponse("news.html", {
             "request": request,
@@ -41,6 +49,7 @@ async def pretty_news_page(request: Request, category: str = "technology"):
             "error": articles["error"]
         })
 
+    # Render news page
     return templates.TemplateResponse("news.html", {
         "request": request,
         "articles": articles,

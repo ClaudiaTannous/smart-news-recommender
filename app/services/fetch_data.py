@@ -1,6 +1,8 @@
 import os
 import httpx
 from datetime import datetime, timedelta
+from app.services.cache import get_cache, set_cache
+from app.services.api_client import call_news_api
 from dotenv import load_dotenv
 
 # Load API key
@@ -61,22 +63,30 @@ async def fetch_news(category: str = "AI"):
     return {"articles": collected_articles}
 
 
-# 🔄 Format and filter for UI
 async def get_news_articles(category: str = "AI"):
+    category = category.strip().lower()
+    cache_key = f"news:{category}"
+
+    # ✅ 1. Try to get from Redis cache first
+    cached = get_cache(cache_key)
+    if cached:
+        print(f"✅ Loaded cached news for: {category}")
+        return cached
+
+    # 🔥 2. Fetch from API if not cached
     news_data = await fetch_news(category)
     raw_articles = news_data.get("articles", [])
-    keyword = category.strip().lower()
 
-    # ✅ Keyword-based filtering (title + description)
+    # ✅ 3. Keyword-based filtering (title + description)
     filtered = [
         a for a in raw_articles
-        if keyword in (a.get("title", "") + a.get("description", "")).lower()
+        if category in (a.get("title", "") + a.get("description", "")).lower()
     ]
 
-    # ✅ Fallback: show unfiltered results if filtered is empty
+    # ✅ 4. Fallback if filter is empty
     articles_to_use = filtered if filtered else raw_articles
 
-    # ✅ Deduplicate by title
+    # ✅ 5. Deduplicate by title
     seen_titles = set()
     unique_articles = []
     for a in articles_to_use:
@@ -85,7 +95,7 @@ async def get_news_articles(category: str = "AI"):
             seen_titles.add(title)
             unique_articles.append(a)
 
-    # ✅ Format for frontend
+    # ✅ 6. Format for frontend
     formatted = []
     for a in unique_articles:
         formatted.append({
@@ -99,5 +109,7 @@ async def get_news_articles(category: str = "AI"):
             "content": a.get("content")
         })
 
-    return formatted
+    # ✅ 7. Store formatted result in Redis
+    set_cache(cache_key, formatted, ttl=1800)  # 30 minutes
 
+    return formatted
