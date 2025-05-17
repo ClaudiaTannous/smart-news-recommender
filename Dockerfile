@@ -1,23 +1,23 @@
-# Base Python image
+# Use a lightweight base image with Python 3.10
 FROM python:3.10-slim
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy files to the container
+# Optional: Install system packages needed for some Python libs
+RUN apt-get update && apt-get install -y build-essential
+
+# Copy your entire project into the container
 COPY . .
 
-# Install dependencies
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose FastAPI port
-EXPOSE 8000
+# Set environment variable to distinguish cloud vs local
+ENV GCP_DEPLOYMENT=1
 
-# Run the FastAPI app
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-FROM python:3.10-slim
-WORKDIR /app
-COPY . .
-RUN pip install -r requirements.txt
-EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Expose the port FastAPI will use
+EXPOSE 8080
+
+# Run your FastAPI app via run_server.py
+CMD ["python", "run_server.py"]

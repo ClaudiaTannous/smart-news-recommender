@@ -1,130 +1,180 @@
 body {
-  margin: 0;
+  background-image: url("/static/mountain.png"); /* ✅ Adjust to actual filename */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  color: #1a202c;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f7fafc;
-  text-align: center;
-  padding: 20px;
+  margin: 0;
 }
 
-.title {
-  font-size: 2.2rem;
-  margin-bottom: 40px;
-  color: #2d3748;
+.navbar {
+  background: rgba(255, 192, 203, 0.25);  /* 🎀 Baby pink with transparency */
+  backdrop-filter: blur(14px);           /* Glass effect */
+  -webkit-backdrop-filter: blur(14px);   /* Safari support */
+  padding: 10px 30px;
+  color: white;
+  border-bottom: 1px solid rgba(255, 182, 193, 0.3); /* light pink border */
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); /* subtle shadow */
 }
 
-.carousel-container {
-  position: relative;
-  width: 90%;
-  max-width: 700px;
+.logo {
+  font-size: 2rem;     /* ✅ Make it larger */
+  font-weight: 800;    /* Extra bold for emphasis */
+  color: white;
+  margin: 0;
+}
+
+
+.menu a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  font-size: 0.95rem;  /* 🔽 slightly smaller text */
+  padding: 6px 0;
+}
+
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;              /* space between logo and menu */
+  max-width: 1200px;
   margin: auto;
-  overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-  background: white;
 }
 
-.carousel-slide {
-  display: none;
+.menu {
+  display: flex;
+  gap: 20px;              /* spacing between nav links */
+}
+
+.menu a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;       /* ✅ Smaller than logo */
+  padding: 4px 0;
+}
+/* ✅ Search Bar */
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin: 30px auto 50px;
+  padding: 0 20px;
+}
+
+.search-bar input {
+  width: 280px;
+  padding: 12px 18px;
+  border: 2px solid white;  /* ✅ white border */
+  border-radius: 50px 0 0 50px;
+  font-size: 1rem;
+  outline: none;
+  background: transparent;
+  color: white;
+}
+
+
+.search-bar button {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: 2px solid white; /* ✅ white border */
+  border-left: none;       /* avoids double border with input */
+  border-radius: 0 50px 50px 0;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+
+.search-bar button:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* ✅ Card Grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  padding: 0 40px 80px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.news-card {
+  padding: 30px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 400;
+  position: relative;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+  background: rgba(179, 106, 117, 0.15); /* 🎀 Light pink undertone */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform 0.2s;
+}
+.interests-form {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
   padding: 20px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 600px;
+  margin: 30px auto;
+  color: white;
+  text-align: center;
 }
 
-.carousel-slide.active {
+.interests-form h2 {
+  margin-bottom: 10px;
+}
+
+.interests-form label {
   display: block;
+  margin-bottom: 8px;
+  font-size: 1rem;
 }
 
-.carousel-slide img {
-  width: 100%;
-  height: 280px;
-  object-fit: cover;
-  margin-bottom: 20px;
-  border-radius: 10px;
+
+.news-card:hover {
+  transform: translateY(-6px);
 }
 
 .headline {
   font-size: 1.4rem;
-  color: #1a202c;
+  font-weight: bold;
   margin-bottom: 12px;
 }
 
 .summary {
   font-size: 1rem;
-  color: #4a5568;
-  margin-bottom: 10px;
+  line-height: 1.5;
+  margin-bottom: 12px;
 }
 
 .read-link {
+  color: white;
   font-weight: bold;
-  text-decoration: none;
-  color: #3182ce;
-  display: inline-block;
-  margin: 10px 0;
-}
-
-.read-link:hover {
   text-decoration: underline;
 }
 
-.meta {
-  margin-top: 15px;
-  font-size: 0.85rem;
-  color: #718096;
-}
-
-.meta span {
-  font-weight: 500;
-}
-
-.nav {
+/* ✅ Tags */
+.tag {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 2rem;
-  background: #3182ce;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-  border-radius: 6px;
-  z-index: 2;
-  opacity: 0.8;
+  top: 20px;
+  left: 20px;
+  background: rgba(255,255,255,0.2);
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-.prev {
-  left: 10px;
-}
 
-.next {
-  right: 10px;
-}
 
-.nav:hover {
-  background: #2b6cb0;
-}
-.search-form {
-  margin-bottom: 30px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.search-form input {
-  padding: 10px;
-  width: 250px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-}
-
-.search-form button {
-  padding: 10px 16px;
-  background-color: #3182ce;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.search-form button:hover {
-  background-color: #2b6cb0;
-}

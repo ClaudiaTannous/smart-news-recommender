@@ -6,64 +6,42 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1 class="title"> News about {{ query }}</h1>
+ <header class="navbar">
+    <div class="nav-content">
+      <h2 class="logo">Smart News</h2>
+      <nav class="menu">
+      <a href="/">Home</a>
+      </nav>
 
-  <!-- ✅ Search Form -->
-  <form method="get" action="/recommend-news-page" class="search-form">
-    <input type="text" name="category" placeholder="Search news..." value="{{ query }}" required>
-    <button type="submit"> Search</button>
+    
+    </div>
+  </header>
+
+  <!-- ✅ Search bar (OUTSIDE navbar) -->
+  <form method="get" action="/recommend-news-page" class="search-bar">
+    <input type="text" name="category" placeholder="Search..." value="{{ query }}" required />
+    <button type="submit">search</button>
   </form>
 
-  <!-- ✅ News Slideshow Carousel -->
-  <div class="carousel-container">
+  <!-- ✅ News Cards -->
+  <div class="card-grid">
     {% if articles %}
       {% for article in articles %}
-      <div class="carousel-slide {% if loop.index0 == 0 %}active{% endif %}">
-        {% if article.image %}
-          <img src="{{ article.image }}" alt="Article Image">
+      <div class="news-card {{ article.source|lower }}">
+        {% if article.source %}
+        <span class="tag">{{ article.source }}</span>
         {% endif %}
         <h2 class="headline">{{ article.title }}</h2>
         {% if article.summary %}
-          <p class="summary">{{ article.summary }}</p>
+        <p class="summary">{{ article.summary }}</p>
         {% endif %}
-        <a href="{{ article.url }}" target="_blank" class="read-link">Click here to read more </a>
-        <div class="meta">
-          {% if article.author %}<p> Written by : <span>{{ article.author }}</span></p>{% endif %}
-          {% if article.source %}<p> publisher: <span>{{ article.source }}</span></p>{% endif %}
-          {% if article.published %}<p>published at : <span>{{ article.published[:10] }}</span></p>{% endif %}
-        </div>
+        <a href="{{ article.url }}" target="_blank" class="read-link">Read more →</a>
       </div>
       {% endfor %}
     {% else %}
-      <p>No articles found. Try a different search term.</p>
+      <p class="no-articles">No articles found. Try a different search term.</p>
     {% endif %}
-
-    <button class="nav prev" onclick="prevSlide()">❮</button>
-    <button class="nav next" onclick="nextSlide()">❯</button>
   </div>
-
-  <!-- ✅ Carousel Script -->
-  <script>
-    const slides = document.querySelectorAll('.carousel-slide');
-    let currentIndex = 0;
-
-    function showSlide(index) {
-      slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === index);
-      });
-    }
-
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % slides.length;
-      showSlide(currentIndex);
-    }
-
-    function prevSlide() {
-      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-      showSlide(currentIndex);
-    }
-
-    showSlide(currentIndex);
-  </script>
 </body>
+
 </html>

@@ -12,39 +12,82 @@ if not API_KEY:
 
 BASE_URL = "https://newsapi.org/v2/everything"
 
-# 🔥 Fetch HOTTEST news
+# ✅ Synonym expansion
+SYNONYMS = {
+    "ai": ["artificial intelligence", "machine learning", "deep learning", "AI"],
+    "climate": ["environment", "climate change", "global warming", "carbon emissions"],
+    "sports": ["football", "soccer", "basketball", "tennis", "NBA", "FIFA"],
+    "technology": ["tech news", "gadgets", "startups", "innovation", "computing"],
+    "health": ["medicine", "healthcare", "mental health", "fitness", "wellness"],
+    "politics": ["government", "elections", "lawmakers", "policy", "parliament"],
+    "economy": ["stock market", "inflation", "recession", "GDP", "financial news"],
+    "science": ["space", "research", "NASA", "experiments", "scientific discoveries"],
+    "entertainment": ["movies", "celebrities", "TV shows", "Hollywood", "Netflix"],
+    "education": ["schools", "universities", "online learning", "students", "academic"],
+    "cybersecurity": ["data breach", "hacking", "cyber attacks", "malware", "phishing"],
+    "business": ["entrepreneurship", "startups", "investments", "corporate", "mergers"],
+    "travel": ["tourism", "destinations", "flights", "hotels", "vacation"],
+    # Add more topics as needed
+}
+
+# 🔥 Fetch trending news
 async def fetch_news(category: str = "AI"):
     print(f"🔥 Fetching HOT news for: {category}")
-
-    # Only get articles from last 2 days
     today = datetime.utcnow()
     from_date = (today - timedelta(days=2)).strftime("%Y-%m-%d")
 
-    params = {
-        "q": category,
-        "language": "en",
-        "from": from_date,
-        "sortBy": "popularity",   # 🔥 Trending news
-        "pageSize": 8,
-        "apiKey": API_KEY
-    }
+    keywords = SYNONYMS.get(category.strip().lower(), [category.strip()])
+    collected_articles = []
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(BASE_URL, params=params)
-            response.raise_for_status()
-            return response.json()
+            for term in keywords:
+                params = {
+                    "q": term,
+                    "language": "en",
+                    "from": from_date,
+                    "sortBy": "popularity",
+                    "pageSize": 8,
+                    "apiKey": API_KEY
+                }
+                response = await client.get(BASE_URL, params=params)
+                response.raise_for_status()
+                articles = response.json().get("articles", [])
+                collected_articles.extend(articles)
     except Exception as e:
         print(f"❌ Error fetching news: {e}")
         return {"articles": []}
 
-# 🔄 Format for display
+    return {"articles": collected_articles}
+
+
+# 🔄 Format and filter for UI
 async def get_news_articles(category: str = "AI"):
     news_data = await fetch_news(category)
-    articles = news_data.get("articles", [])
+    raw_articles = news_data.get("articles", [])
+    keyword = category.strip().lower()
 
+    # ✅ Keyword-based filtering (title + description)
+    filtered = [
+        a for a in raw_articles
+        if keyword in (a.get("title", "") + a.get("description", "")).lower()
+    ]
+
+    # ✅ Fallback: show unfiltered results if filtered is empty
+    articles_to_use = filtered if filtered else raw_articles
+
+    # ✅ Deduplicate by title
+    seen_titles = set()
+    unique_articles = []
+    for a in articles_to_use:
+        title = a.get("title", "")
+        if title and title not in seen_titles:
+            seen_titles.add(title)
+            unique_articles.append(a)
+
+    # ✅ Format for frontend
     formatted = []
-    for a in articles:
+    for a in unique_articles:
         formatted.append({
             "title": a.get("title"),
             "summary": a.get("description"),
@@ -55,4 +98,6 @@ async def get_news_articles(category: str = "AI"):
             "published": a.get("publishedAt"),
             "content": a.get("content")
         })
+
     return formatted
+

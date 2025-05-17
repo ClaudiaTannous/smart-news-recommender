@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.routes import router
 from app.services.fetch_data import get_news_articles
 
+
 import os
 from dotenv import load_dotenv
 load_dotenv()  # 🔑 Load NEWS_API_KEY from .env
