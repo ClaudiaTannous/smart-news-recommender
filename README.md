@@ -2,6 +2,10 @@
 
 Smart News Recommender is a dynamic web application that delivers relevant news articles to users based on keyword-based search queries and category selection. The application integrates synonym expansion, keyword filtering, Redis caching, and a clean frontend interface to provide a fast and consistent user experience. It is fully containerized with Docker and deployed using Google Cloud Run.
 
+# Website Link :
+https://smart-news-recommender-645660361118.me-west1.run.app/recommend-news-page?category=technology
+
+
 ## Project Overview
 
 The application allows users to explore and search for current news topics through a simple and responsive interface. It fetches news from the NewsAPI.org service and processes the data to return focused results. To improve both performance and usability, it expands search terms using related synonyms and filters articles based on the presence of those terms in the title or description.
